@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Mine Monitoring Dashboard</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f1f5f9;
+
+    color: #0f172a;
+}
+
+
+/* HEADER */
+
+.header {
+
+    background: #0f172a;
+
+    color: white;
+
+    padding: 20px 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.header h1 {
+
+    margin: 0;
+
+    font-size: 26px;
+
+}
+
+.status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+.status-dot {
+
+    width: 12px;
+
+    height: 12px;
+
+    background: #22c55e;
+
+    border-radius: 50%;
+
+}
+
+
+/* CONTAINER */
+
+.container {
+
+    max-width: 1400px;
+
+    margin: auto;
+
+    padding: 25px;
+
+}
+
+
+/* SUMMARY */
+
+.summary {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+
+.summary-card {
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 2px 10px
+        rgba(0,0,0,0.08);
+
+}
+
+.summary-title {
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+.summary-value {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin-top: 8px;
+
+}
+
+
+/* NODE GRID */
+
+.nodes {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+}
+
+
+/* NODE CARD */
+
+.node-card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 15px
+        rgba(0,0,0,0.10);
+
+    border: 3px solid #22c55e;
+
+    transition: 0.3s;
+
+}
+
+
+/* CARD HEADER */
+
+.node-header {
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.node-name {
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+}
+
+
+/* RISK */
+
+.risk {
+
+    padding: 7px 14px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+    font-size: 13px;
+
+}
+
+
+/* NORMAL */
+
+.normal {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+
+/* WARNING */
+
+.warning {
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+}
+
+
+/* CRITICAL */
+
+.critical {
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+}
+
+
+/* SENSOR GRID */
+
+.sensors {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+
+    padding: 18px;
+
+}
+
+.sensor {
+
+    background: #f8fafc;
+
+    padding: 15px 8px;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+}
+
+.sensor-label {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+}
+
+.sensor-value {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-top: 5px;
+
+}
+
+
+/* PROBABILITY */
+
+.probability {
+
+    padding: 0 18px 18px 18px;
+
+}
+
+.probability-title {
+
+    font-weight: bold;
+
+    margin-bottom: 10px;
+
+}
+
+.bar-container {
+
+    margin-bottom: 9px;
+
+}
+
+.bar-label {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 13px;
+
+    margin-bottom: 4px;
+
+}
+
+.bar {
+
+    height: 9px;
+
+    background: #e2e8f0;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+.bar-fill {
+
+    height: 100%;
+
+    width: 0%;
+
+    transition: width 0.5s;
+
+}
+
+
+/* COLORS */
+
+.bar-critical {
+
+    background: #ef4444;
+
+}
+
+.bar-warning {
+
+    background: #eab308;
+
+}
+
+.bar-normal {
+
+    background: #22c55e;
+
+}
+
+
+/* FOOTER */
+
+.node-footer {
+
+    padding: 12px 18px;
+
+    border-top: 1px solid #e2e8f0;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+}
+
+
+/* CRITICAL ALERT */
+
+.critical-alert {
+
+    display: none;
+
+    background: #991b1b;
+
+    color: white;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+    animation: blink 1s infinite;
+
+}
+
+@keyframes blink {
+
+    50% {
+
+        opacity: 0.65;
+
+    }
+
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width: 1000px) {
+
+    .nodes {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .summary {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+@media(max-width: 600px) {
+
+    .summary {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .sensors {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1>
+        ⛏️ MINE MONITORING SYSTEM
+    </h1>
+
+    <div class="status">
+
+        <div class="status-dot"
+             id="serverDot"></div>
+
+        <span id="serverStatus">
+            Server Online
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- CRITICAL ALERT -->
+
+<div id="criticalAlert"
+     class="critical-alert">
+
+    🚨 CRITICAL ALERT —
+    IMMEDIATE ATTENTION REQUIRED
+
+</div>
+
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+
+<div class="summary-card">
+
+    <div class="summary-title">
+        TOTAL NODES
+    </div>
+
+    <div class="summary-value">
+        3
+    </div>
+
+</div>
+
+
+<div class="summary-card">
+
+    <div class="summary-title">
+        NORMAL
+    </div>
+
+    <div class="summary-value"
+         id="normalCount">
+
+        3
+
+    </div>
+
+</div>
+
+
+<div class="summary-card">
+
+    <div class="summary-title">
+        WARNING
+    </div>
+
+    <div class="summary-value"
+         id="warningCount">
+
+        0
+
+    </div>
+
+</div>
+
+
+<div class="summary-card">
+
+    <div class="summary-title">
+        CRITICAL
+    </div>
+
+    <div class="summary-value"
+         id="criticalCount">
+
+        0
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- NODES -->
+
+<div class="nodes">
+
+
+<!-- N1 -->
+
+<div class="node-card"
+     id="card-N1">
+
+    <div class="node-header">
+
+        <div class="node-name">
+            NODE N1
+        </div>
+
+        <div class="risk normal"
+             id="risk-N1">
+
+            NORMAL
+
+        </div>
+
+    </div>
+
+
+    <div class="sensors">
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                VIBRATION
+            </div>
+
+            <div class="sensor-value"
+                 id="vibration-N1">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                DISPLACEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="displacement-N1">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                MOVEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="movement-N1">
+
+                0
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="probability">
+
+        <div class="probability-title">
+            ML PREDICTION PROBABILITY
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Critical</span>
+
+                <span id="critical-N1">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-critical"
+                     id="criticalBar-N1">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Warning</span>
+
+                <span id="warning-N1">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-warning"
+                     id="warningBar-N1">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Normal</span>
+
+                <span id="normal-N1">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-normal"
+                     id="normalBar-N1">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="node-footer"
+         id="time-N1">
+
+        Waiting for data...
+
+    </div>
+
+</div>
+
+
+<!-- N2 -->
+
+<div class="node-card"
+     id="card-N2">
+
+    <div class="node-header">
+
+        <div class="node-name">
+            NODE N2
+        </div>
+
+        <div class="risk normal"
+             id="risk-N2">
+
+            NORMAL
+
+        </div>
+
+    </div>
+
+
+    <div class="sensors">
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                VIBRATION
+            </div>
+
+            <div class="sensor-value"
+                 id="vibration-N2">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                DISPLACEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="displacement-N2">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                MOVEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="movement-N2">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="probability">
+
+        <div class="probability-title">
+            ML PREDICTION PROBABILITY
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Critical</span>
+
+                <span id="critical-N2">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-critical"
+                     id="criticalBar-N2">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Warning</span>
+
+                <span id="warning-N2">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-warning"
+                     id="warningBar-N2">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Normal</span>
+
+                <span id="normal-N2">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-normal"
+                     id="normalBar-N2">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="node-footer"
+         id="time-N2">
+
+        Waiting for data...
+
+    </div>
+
+</div>
+
+
+<!-- N3 -->
+
+<div class="node-card"
+     id="card-N3">
+
+    <div class="node-header">
+
+        <div class="node-name">
+            NODE N3
+        </div>
+
+        <div class="risk normal"
+             id="risk-N3">
+
+            NORMAL
+
+        </div>
+
+    </div>
+
+
+    <div class="sensors">
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                VIBRATION
+            </div>
+
+            <div class="sensor-value"
+                 id="vibration-N3">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                DISPLACEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="displacement-N3">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="sensor">
+
+            <div class="sensor-label">
+                MOVEMENT
+            </div>
+
+            <div class="sensor-value"
+                 id="movement-N3">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="probability">
+
+        <div class="probability-title">
+            ML PREDICTION PROBABILITY
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Critical</span>
+
+                <span id="critical-N3">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-critical"
+                     id="criticalBar-N3">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Warning</span>
+
+                <span id="warning-N3">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-warning"
+                     id="warningBar-N3">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-container">
+
+            <div class="bar-label">
+
+                <span>Normal</span>
+
+                <span id="normal-N3">
+                    0%
+
+                </span>
+
+            </div>
+
+            <div class="bar">
+
+                <div class="bar-fill bar-normal"
+                     id="normalBar-N3">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="node-footer"
+         id="time-N3">
+
+        Waiting for data...
+
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+
+// ============================================================
+// UPDATE NODE
+// ============================================================
+
+function updateNode(nodeId, data) {
+
+
+    if (!data) {
+
+        return;
+
+    }
+
+
+    // SENSOR VALUES
+
+    document.getElementById(
+        "vibration-" + nodeId
+    ).innerText = data.vibration;
+
+
+    document.getElementById(
+        "displacement-" + nodeId
+    ).innerText = data.displacement;
+
+
+    document.getElementById(
+        "movement-" + nodeId
+    ).innerText = data.movement;
+
+
+    // RISK
+
+    let risk = data.risk || "Normal";
+
+    let riskElement =
+        document.getElementById(
+            "risk-" + nodeId
+        );
+
+
+    riskElement.innerText =
+        risk.toUpperCase();
+
+
+    // REMOVE CLASSES
+
+    riskElement.classList.remove(
+        "normal",
+        "warning",
+        "critical"
+    );
+
+
+    let card =
+        document.getElementById(
+            "card-" + nodeId
+        );
+
+
+    // NORMAL
+
+    if (risk === "Normal") {
+
+        riskElement.classList.add(
+            "normal"
+        );
+
+        card.style.borderColor =
+            "#22c55e";
+
+    }
+
+
+    // WARNING
+
+    else if (risk === "Warning") {
+
+        riskElement.classList.add(
+            "warning"
+        );
+
+        card.style.borderColor =
+            "#eab308";
+
+    }
+
+
+    // CRITICAL
+
+    else if (risk === "Critical") {
+
+        riskElement.classList.add(
+            "critical"
+        );
+
+        card.style.borderColor =
+            "#ef4444";
+
+    }
+
+
+    // PROBABILITIES
+
+    let p = data.probability || {};
+
+    let critical =
+        Number(p.Critical || 0);
+
+    let warning =
+        Number(p.Warning || 0);
+
+    let normal =
+        Number(p.Normal || 0);
+
+
+    document.getElementById(
+        "critical-" + nodeId
+    ).innerText =
+        critical + "%";
+
+
+    document.getElementById(
+        "warning-" + nodeId
+    ).innerText =
+        warning + "%";
+
+
+    document.getElementById(
+        "normal-" + nodeId
+    ).innerText =
+        normal + "%";
+
+
+    // PROGRESS BARS
+
+    document.getElementById(
+        "criticalBar-" + nodeId
+    ).style.width =
+        critical + "%";
+
+
+    document.getElementById(
+        "warningBar-" + nodeId
+    ).style.width =
+        warning + "%";
+
+
+    document.getElementById(
+        "normalBar-" + nodeId
+    ).style.width =
+        normal + "%";
+
+
+    // TIMESTAMP
+
+    document.getElementById(
+        "time-" + nodeId
+    ).innerText =
+        "Last update: " +
+        data.timestamp;
+
+}
+
+
+// ============================================================
+// FETCH DATA
+// ============================================================
+
+async function updateDashboard() {
+
+    try {
+
+        let response =
+            await fetch("/latest");
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Server error"
+            );
+
+        }
+
+
+        let data =
+            await response.json();
+
+
+        updateNode(
+            "N1",
+            data.N1
+        );
+
+        updateNode(
+            "N2",
+            data.N2
+        );
+
+        updateNode(
+            "N3",
+            data.N3
+        );
+
+
+        // SERVER ONLINE
+
+        document.getElementById(
+            "serverStatus"
+        ).innerText =
+            "Server Online";
+
+
+        document.getElementById(
+            "serverDot"
+        ).style.background =
+            "#22c55e";
+
+
+        // COUNTS
+
+        let normalCount = 0;
+        let warningCount = 0;
+        let criticalCount = 0;
+
+
+        ["N1", "N2", "N3"]
+        .forEach(function(node) {
+
+            let risk =
+                data[node].risk;
+
+
+            if (risk === "Normal") {
+
+                normalCount++;
+
+            }
+
+            else if (risk === "Warning") {
+
+                warningCount++;
+
+            }
+
+            else if (risk === "Critical") {
+
+                criticalCount++;
+
+            }
+
+        });
+
+
+        document.getElementById(
+            "normalCount"
+        ).innerText =
+            normalCount;
+
+
+        document.getElementById(
+            "warningCount"
+        ).innerText =
+            warningCount;
+
+
+        document.getElementById(
+            "criticalCount"
+        ).innerText =
+            criticalCount;
+
+
+        // CRITICAL ALERT
+
+        let alert =
+            document.getElementById(
+                "criticalAlert"
+            );
+
+
+        if (criticalCount > 0) {
+
+            alert.style.display =
+                "block";
+
+            alert.innerText =
+                "🚨 CRITICAL ALERT — " +
+                criticalCount +
+                " NODE(S) REQUIRE IMMEDIATE ATTENTION";
+
+        }
+
+        else {
+
+            alert.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    catch(error) {
+
+        console.log(error);
+
+
+        document.getElementById(
+            "serverStatus"
+        ).innerText =
+            "Server Offline";
+
+
+        document.getElementById(
+            "serverDot"
+        ).style.background =
+            "#ef4444";
+
+    }
+
+}
+
+
+// ============================================================
+// UPDATE EVERY 1 SECOND
+// ============================================================
+
+updateDashboard();
+
+setInterval(
+    updateDashboard,
+    1000
+);
+
+</script>
+
+
+</body>
+
+</html>
